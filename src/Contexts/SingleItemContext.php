@@ -6,6 +6,7 @@ use IO\Helper\ContextInterface;
 use IO\Services\CustomerService;
 use IO\Services\ItemService;
 use Plenty\Plugin\ConfigRepository;
+use Plenty\Modules\Item\Item\Contracts\ItemRepositoryContract;
 
 
 class SingleItemContext extends GlobalContext implements ContextInterface
@@ -16,6 +17,7 @@ class SingleItemContext extends GlobalContext implements ContextInterface
     public $attributeNameMap;
     public $variationUnits;
     public $customerShowNetPrices;
+    public $myItemData;
 
     public function init($params)
     {
@@ -32,6 +34,8 @@ class SingleItemContext extends GlobalContext implements ContextInterface
         $availabiltyId = $itemData['variation']['availability']['id'];
         $mappedAvailability = $configRepository->get('Ceres.availability.mapping.availability' . $availabiltyId);
         $this->item['documents'][0]['data']['variation']['availability']['mappedAvailability'] = $mappedAvailability;
+        $itemRep =  pluginApp(ItemRepositoryContract::class);
+        $this->myItemData = $itemRep->show($itemData['item']['id']);
 
         /** @var ItemService $itemService */
         $itemService = pluginApp(ItemService::class);
